@@ -2,12 +2,13 @@ const listsContainer = document.querySelector("[data-lists]");
 const newListForm = document.querySelector("[data-new-list-form]");
 const newListInput = document.querySelector("[data-new-list-input]");
 const deleteListButton = document.querySelector("[data-delete-list-button]");
-const listdisplayContiner = document.querySelector(
+const listDisplayContiner = document.querySelector(
   "[data-list-display-container]"
 );
 const listTitleElement = document.querySelector("[data-list-title]");
 const listCountElement = document.querySelector("[data-list-count]");
-const tasksContainer = document.querySelector();
+const tasksContainer = document.querySelector("[data-tasks]");
+const taskTemplate = document.getElementById('[task-template]')
 
 const LOCAL_STORAGE_LIST_KEY = "task.lists";
 const LOCAL_STORAGE_SELECTD_LIST_ID_KEY = "task.selectedListId";
@@ -53,6 +54,37 @@ function save() {
 
 function render() {
   clearElement(listsContainer);
+  renderLists();
+
+  const selectedList = lists.find((list) => list.id === selectedListId);
+  if (selectedListId == null) {
+    listDisplayContiner.style.display = "none";
+  } else {
+    listDisplayContiner.style.display = " ";
+    listTitleElement.innerText = selectedList.name;
+    renderTaskCount(selectedList);
+    clearElement(tasksContainer);
+    renderTasks(selectedList)
+  }
+}
+
+function renderTasks(selectedList) {
+  selectedList.tasks.forEach(task => {
+    const taskElement = document.importNode(taskTemplate.contentEditable, true)
+    const checkbox = taskElement.querySelector('input') checkbox.id = task.id 
+  })
+}
+
+function renderTaskCount(selectedList) {
+  const incompleteTasksCount = selectedList.tasks.filter(
+    (task) => !task.complete
+  ).length;
+  const taskString = incompleteTasksCount === 1 ? "task" : "tasks";
+  listCountElement.innerText = `${incompleteTasksCount} ${taskString}
+  remaing`;
+}
+
+function renderLists() {
   lists.forEach((list) => {
     const listElement = document.createElement("li");
     listElement.dataset.listId = list.id;
